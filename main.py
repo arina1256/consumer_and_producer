@@ -76,23 +76,22 @@ class JP2Viewer:
         self.check_loading()
         self.window.mainloop()
     
-    @staticmethod
-    def producer_task_static(file_list, task_queue, num_consumers, stop_event):
-        for i, path in enumerate(file_list):
-            if stop_event.is_set():
+    def producer_task_static(self):
+        for i, path in enumerate(self.files):
+            if self.stop_event.is_set():
                 break
             try:
-                task_queue.put((i, path), timeout=1)
+                self.task_queue.put((i, path), timeout=1)
             except Exception as err:
                 print(f"Ошибка: {err}")
-        for _ in range(num_consumers):
+        for _ in range(self.num_consumers):
             try:
-                task_queue.put(None, timeout=1)
+                self.task_queue.put(None, timeout=1)
             except Exception as err:
                 print(f"Ошибка: {err}")
     
     def start_processings(self):
-        self.producer = multiprocessing.Process(target=JP2Viewer.producer_task_static,args=(self.files, self.task_queue, self.num_consumers, self.stop_event))
+        self.producer = multiprocessing.Process(target=self.producer_task_static)
         self.producer.start()
         
         self.consumers = []
