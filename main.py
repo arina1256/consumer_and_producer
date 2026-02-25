@@ -76,7 +76,7 @@ class JP2Viewer:
         self.check_loading()
         self.window.mainloop()
     
-    def producer_task_static(self):
+    def producer_task(self):
         for i, path in enumerate(self.files):
             if self.stop_event.is_set():
                 break
@@ -91,7 +91,7 @@ class JP2Viewer:
                 print(f"Ошибка: {err}")
     
     def start_processings(self):
-        self.producer = multiprocessing.Process(target=self.producer_task_static)
+        self.producer = multiprocessing.Process(target=self.producer_task)
         self.producer.start()
         
         self.consumers = []
