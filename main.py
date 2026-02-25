@@ -14,6 +14,8 @@ THUMBNAIL_SIZE = (640, 480)
 LOADING_DELAY = 200
 NUMBER_OF_CONSUMERS = os.cpu_count()-1
 RESULTS_CHECK_DELAY = 10
+RGB_NUMBER = 3
+MAX_RGB = 255
 
 def consumer_task(task_queue, result_queue, stop_event):
     while not stop_event.is_set():
@@ -27,9 +29,9 @@ def consumer_task(task_queue, result_queue, stop_event):
             jp2 = glymur.Jp2k(path)
             data = jp2[:]
             
-            if len(data.shape) == 3 and data.shape[2] == 3:
+            if len(data.shape) == RGB_NUMBER and data.shape[2] == RGB_NUMBER:
                 if data.dtype != np.uint8:
-                    data = (data / data.max() * 255).astype(np.uint8)
+                    data = (data / data.max() * MAX_RGB).astype(np.uint8)
                 
             img = Image.fromarray(data, mode='RGB')
             img.thumbnail(THUMBNAIL_SIZE)
