@@ -18,7 +18,7 @@ RGB_NUMBER = 3
 MAX_RGB = 255
 
 def consumer_task(task_queue, result_queue, stop_event):
-    while not stop_event.is_set():
+    while True:
         try:
             task = task_queue.get(timeout=1)
             if task is None:
@@ -33,6 +33,7 @@ def consumer_task(task_queue, result_queue, stop_event):
                 if data.dtype != np.uint8:
                     data = (data / data.max() * MAX_RGB).astype(np.uint8)
                 
+
             img = Image.fromarray(data, mode='RGB')
             img.thumbnail(THUMBNAIL_SIZE)
             result_queue.put((i, img.tobytes(), img.size))
