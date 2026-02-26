@@ -12,7 +12,7 @@ import numpy as np
 TASK_QUEUE_SIZE = 20
 THUMBNAIL_SIZE = (640, 480)
 LOADING_DELAY = 200
-NUMBER_OF_CONSUMERS = os.cpu_count()-1
+NUMBER_OF_CONSUMERS = max(os.cpu_count()-1,1)
 RESULTS_CHECK_DELAY = 10
 RGB_NUMBER = 3
 MAX_RGB = 255
@@ -161,12 +161,12 @@ class JP2Viewer:
         self.stop_event.set()
         
         for _ in range(self.num_consumers):
-            self.task_queue.put(None)
+            self.task_queue.put_nowait(None)
 
         self.producer.join()
         for i in self.consumers:
             i.join()
-
+	
         self.window.quit()
         self.window.destroy()
 
